@@ -39,7 +39,7 @@ def studentsView(request):
 
     # USING RECOMMENDED WAY
 
-@api_view(['GET'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def studentDetailsView(request, pk):
     try:
         student = Student.objects.get(pk=pk)
@@ -54,6 +54,10 @@ def studentDetailsView(request, pk):
         serializer = StudentSerializer(student, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.errors, status=status.HTTP_200_OK)
+            return Response(serializer.data , status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+        
+    elif request.method == 'DELETE':
+        student.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
