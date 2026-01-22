@@ -11,7 +11,8 @@ from django.http import Http404
 from blog.models import *
 from blog.serializers import *
 from .paginations import CustomPagination
-
+from django_filters.rest_framework import DjangoFilterBackend
+from employee.filters import EmployeeFilter
 
 
 @api_view(['GET', 'POST'])
@@ -202,10 +203,12 @@ class EmployeeViewSet(viewsets.ViewSet):
 
 # USING JUST VIEWMODELSET WILL CREATE A COMPLETE CRUD OPs. SIMPLE AS ABCD hUH!
 class EmployeeViewSet(viewsets.ModelViewSet):
-    queryset = Employee.objects.all()
+    queryset = Employee.objects.all().order_by('pk')
     serializer_class = EmployeeSerializer
     pagination_class = CustomPagination
-    filterset_fields = ['designation']
+    # filterset_fields = ['designation'] # Wanna filter bata search na case sensitive! kuma nayi ma bai ba!
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = EmployeeFilter
 
 class BlogViews(generics.ListCreateAPIView):
     queryset = Blog.objects.all()
